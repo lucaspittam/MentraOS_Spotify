@@ -37,18 +37,50 @@ export class SpotifyApiService {
   }
 
   async playTrack(): Promise<void> {
+    // Check if there are any available devices first
+    const devices = await this.getAvailableDevices();
+    if (devices.length === 0) {
+      throw new Error('No Spotify devices available. Please open Spotify on your phone, computer, or another device first.');
+    }
+    
+    const activeDevices = devices.filter(d => d.is_active);
+    if (activeDevices.length === 0) {
+      throw new Error('No active Spotify device found. Please start playing music on Spotify first, then try again.');
+    }
+    
     await this.makePlayerRequest('PUT', '/me/player/play');
   }
 
   async pauseTrack(): Promise<void> {
+    // Check for active devices before pausing
+    const devices = await this.getAvailableDevices();
+    const activeDevices = devices.filter(d => d.is_active);
+    if (activeDevices.length === 0) {
+      throw new Error('No active Spotify device found. Please start playing music on Spotify first.');
+    }
+    
     await this.makePlayerRequest('PUT', '/me/player/pause');
   }
 
   async nextTrack(): Promise<void> {
+    // Check for active devices before skipping
+    const devices = await this.getAvailableDevices();
+    const activeDevices = devices.filter(d => d.is_active);
+    if (activeDevices.length === 0) {
+      throw new Error('No active Spotify device found. Please start playing music on Spotify first.');
+    }
+    
     await this.makePlayerRequest('POST', '/me/player/next');
   }
 
   async previousTrack(): Promise<void> {
+    // Check for active devices before going to previous track
+    const devices = await this.getAvailableDevices();
+    const activeDevices = devices.filter(d => d.is_active);
+    if (activeDevices.length === 0) {
+      throw new Error('No active Spotify device found. Please start playing music on Spotify first.');
+    }
+    
     await this.makePlayerRequest('POST', '/me/player/previous');
   }
 
