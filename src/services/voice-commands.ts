@@ -1,10 +1,12 @@
 import { VoiceCommand } from '../types';
 import { SpotifyApiService } from './spotify-api';
 import { SpotifyOverlay } from '../ui/overlay';
+import { AppSession } from '@mentra/sdk';
 
 export class VoiceCommandService {
   private spotifyApi: SpotifyApiService;
   private overlay: SpotifyOverlay;
+  private session: AppSession | null = null;
   private currentTrackId: string | null = null;
 
   constructor(spotifyApi: SpotifyApiService, overlay: SpotifyOverlay) {
@@ -12,30 +14,55 @@ export class VoiceCommandService {
     this.overlay = overlay;
   }
 
-  async initialize(): Promise<void> {
-    await this.registerCommands();
+  setSession(session: AppSession): void {
+    this.session = session;
   }
 
-  private async registerCommands(): Promise<void> {
-    const mentra = await import('@mentra/sdk');
-    
-    const commands: VoiceCommand[] = [
-      { phrase: 'show spotify', action: 'toggleOverlay' },
-      { phrase: 'hide spotify', action: 'hideOverlay' },
-      { phrase: 'next song', action: 'nextTrack' },
-      { phrase: 'previous song', action: 'previousTrack' },
-      { phrase: 'pause music', action: 'pauseMusic' },
-      { phrase: 'play music', action: 'playMusic' },
-      { phrase: 'like this song', action: 'likeTrack' },
-      { phrase: 'skip', action: 'nextTrack' },
-      { phrase: 'skip song', action: 'nextTrack' }
-    ];
+  async initialize(): Promise<void> {
+    console.log('🎤 VoiceCommandService initialized for MentraOS');
+    // Voice commands will be handled via session.events.onTranscription in the main app
+  }
 
-    for (const command of commands) {
-      await (mentra as any).voice.registerCommand(command.phrase, (event: any) => {
-        this.handleVoiceCommand(command.action, event);
-      });
+  async processVoiceInput(text: string): Promise<boolean> {
+    const lowerText = text.toLowerCase().trim();
+    
+    // Check for Spotify commands
+    if (lowerText.includes('show spotify')) {
+      await this.handleVoiceCommand('toggleOverlay');
+      return true;
     }
+    
+    if (lowerText.includes('hide spotify')) {
+      await this.handleVoiceCommand('hideOverlay');
+      return true;
+    }
+    
+    if (lowerText.includes('next song') || lowerText.includes('skip')) {
+      await this.handleVoiceCommand('nextTrack');
+      return true;
+    }
+    
+    if (lowerText.includes('previous song')) {
+      await this.handleVoiceCommand('previousTrack');
+      return true;
+    }
+    
+    if (lowerText.includes('pause music')) {
+      await this.handleVoiceCommand('pauseMusic');
+      return true;
+    }
+    
+    if (lowerText.includes('play music')) {
+      await this.handleVoiceCommand('playMusic');
+      return true;
+    }
+    
+    if (lowerText.includes('like this song')) {
+      await this.handleVoiceCommand('likeTrack');
+      return true;
+    }
+    
+    return false; // Command not recognized
   }
 
   private async handleVoiceCommand(action: string, event?: any): Promise<void> {

@@ -50,6 +50,8 @@ class SpotifyControllerApp extends AppServer {
       overlay.setSession(session); // Pass session to overlay
       
       const voiceService = new VoiceCommandService(this.apiService, overlay);
+      voiceService.setSession(session); // Pass session to voice service
+      
       const settingsService = new MentraSettingsService(
         session,
         this.apiService,
@@ -81,9 +83,12 @@ class SpotifyControllerApp extends AppServer {
         // Handle button interactions
       });
 
-      session.events.onTranscription((data) => {
+      session.events.onTranscription(async (data) => {
         console.log('🎤 Voice input:', data.text);
-        // Voice commands are handled by VoiceCommandService
+        const wasHandled = await voiceService.processVoiceInput(data.text);
+        if (wasHandled) {
+          console.log('✅ Voice command processed:', data.text);
+        }
       });
 
       // Clean up when session ends (handled by AppServer automatically)
