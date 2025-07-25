@@ -113,6 +113,9 @@ export class SpotifyApiService {
       });
 
       if (!response.ok && response.status !== 204) {
+        if (response.status === 404) {
+          throw new Error('No active Spotify device found. Please start playing music on Spotify first.');
+        }
         throw new Error(`Player request failed: ${response.statusText}`);
       }
     } catch (error) {

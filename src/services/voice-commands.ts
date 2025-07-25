@@ -116,7 +116,19 @@ export class VoiceCommandService {
       }
     } catch (error) {
       console.error(`Error handling voice command ${action}:`, error);
-      this.overlay.showError(`Failed to ${action.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+      
+      // Show user-friendly error messages
+      let errorMessage = `Failed to ${action.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
+      
+      if (error instanceof Error) {
+        if (error.message.includes('No active Spotify device')) {
+          errorMessage = 'No Spotify device found. Start playing music on your phone first.';
+        } else if (error.message.includes('Player request failed')) {
+          errorMessage = 'Spotify player error. Check your connection and try again.';
+        }
+      }
+      
+      this.overlay.showError(errorMessage);
     } finally {
       this.overlay.setLoading(false);
     }
