@@ -3,9 +3,6 @@
   "description": "Voice-controlled Spotify playback for MentraOS smart glasses",
   "packageName": "com.ldpr.spotifycontroller",
   "webhookUrl": "https://mentraos-spotify-vhjh.onrender.com/webhook",
-  "permissions": [
-    "microphone"
-  ],
   "settings": [
     {
       "key": "spotify_connected",
