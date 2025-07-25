@@ -9,16 +9,16 @@
   "settings": [
     {
       "key": "spotify_connected",
+      "label": "Spotify Connection",
       "type": "text",
-      "title": "Spotify Connection",
       "description": "Shows whether Spotify account is connected",
       "defaultValue": "Not Connected",
       "readOnly": true
     },
     {
       "key": "auth_action",
+      "label": "Account Connection",
       "type": "select",
-      "title": "Account Connection",
       "description": "Connect or disconnect your Spotify account",
       "options": [
         {"value": "none", "label": "No Action"},
@@ -29,22 +29,22 @@
     },
     {
       "key": "show_album_art",
+      "label": "Show Album Art",
       "type": "toggle",
-      "title": "Show Album Art",
       "description": "Display album artwork in music overlay",
       "defaultValue": false
     },
     {
       "key": "auto_show_overlay",
-      "type": "toggle", 
-      "title": "Auto-Show Music Overlay",
+      "label": "Auto-Show Music Overlay",
+      "type": "toggle",
       "description": "Automatically show music overlay when song changes",
       "defaultValue": false
     },
     {
       "key": "overlay_timeout",
+      "label": "Overlay Display Time",
       "type": "slider",
-      "title": "Overlay Display Time",
       "description": "How long to show music overlay (seconds)",
       "min": 5,
       "max": 60,
@@ -53,16 +53,16 @@
     },
     {
       "key": "voice_feedback",
+      "label": "Voice Confirmations",
       "type": "toggle",
-      "title": "Voice Confirmations", 
       "description": "Play audio confirmations for voice commands",
       "defaultValue": true
     },
     {
       "key": "haptic_feedback",
+      "label": "Haptic Feedback",
       "type": "toggle",
-      "title": "Haptic Feedback",
-      "description": "Vibration confirmations for voice commands", 
+      "description": "Vibration confirmations for voice commands",
       "defaultValue": true
     }
   ],
