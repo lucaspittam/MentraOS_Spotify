@@ -147,7 +147,11 @@ class SpotifyControllerApp extends AppServer {
 
   private async showAuthenticationPrompt(session: AppSession): Promise<void> {
     const authUrl = this.authService.getAuthUrl();
-    const text = `🔗 Connect Spotify\n\nVisit this URL to authenticate:\n\n${authUrl}\n\nOr go to Settings → App Settings → Spotify Controller`;
+    
+    // Create a short URL for easier access
+    const shortUrl = `https://mentraos-spotify-vhjh.onrender.com/auth`;
+    
+    const text = `🔗 Connect Spotify\n\n📱 On your phone, visit:\n${shortUrl}\n\n(This will redirect to Spotify login)\n\nOr say "Connect Spotify"`;
     
     session.layouts.showTextWall(text);
   }
@@ -191,6 +195,13 @@ class SpotifyControllerApp extends AppServer {
 
   private setupOAuthCallback(): void {
     const app = this.getExpressApp();
+    
+    // Spotify auth redirect endpoint - user-friendly short URL
+    app.get('/auth', (req, res) => {
+      const authUrl = this.authService.getAuthUrl();
+      console.log('🔗 Redirecting user to Spotify OAuth:', authUrl);
+      res.redirect(authUrl);
+    });
     
     // Spotify OAuth callback endpoint
     app.get('/callback', async (req, res) => {

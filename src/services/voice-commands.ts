@@ -62,6 +62,11 @@ export class VoiceCommandService {
       return true;
     }
     
+    if (lowerText.includes('connect spotify')) {
+      await this.handleVoiceCommand('connectSpotify');
+      return true;
+    }
+    
     return false; // Command not recognized
   }
 
@@ -104,6 +109,15 @@ export class VoiceCommandService {
             await this.handleFeedback('Track liked');
           } else {
             this.overlay.showError('No track currently playing');
+          }
+          break;
+
+        case 'connectSpotify':
+          if (this.session) {
+            const authUrl = 'https://mentraos-spotify-vhjh.onrender.com/auth';
+            const text = `🔗 Connect Spotify\n\n📱 On your phone, visit:\n${authUrl}\n\nThis will redirect to Spotify login\nand connect your account.`;
+            this.session.layouts.showTextWall(text);
+            await this.handleFeedback('Visit the URL on your phone to connect Spotify');
           }
           break;
 
