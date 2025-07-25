@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: mentraos-spotify
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /status
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MENTRAOS_API_KEY
+        sync: false
+      - key: PACKAGE_NAME
+        value: com.yourname.spotify-controller
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+      - key: SPOTIFY_REDIRECT_URI
+        value: https://mentraos-spotify.onrender.com/callback
