@@ -124,15 +124,13 @@ export class VoiceCommandService {
 
   private async handleFeedback(message: string): Promise<void> {
     try {
-      const mentra = await import('@mentra/sdk');
-      await (mentra as any).feedback.haptic('light');
-      await (mentra as any).feedback.audio('success');
+      // Simple feedback through console for now
+      console.log(`✅ Voice command executed: ${message}`);
       
-      setTimeout(() => {
-        console.log(`Voice command feedback: ${message}`);
-      }, 100);
+      // TODO: Implement proper MentraOS feedback when SDK methods are available
+      // For now, we just log the success
     } catch (error) {
-      console.warn('Failed to provide haptic/audio feedback:', error);
+      console.warn('Failed to provide feedback:', error);
     }
   }
 
@@ -141,11 +139,7 @@ export class VoiceCommandService {
   }
 
   async cleanup(): Promise<void> {
-    try {
-      const mentra = await import('@mentra/sdk');
-      await (mentra as any).voice.unregisterAllCommands();
-    } catch (error) {
-      console.error('Error cleaning up voice commands:', error);
-    }
+    // Cleanup handled by AppServer automatically
+    console.log('🧹 VoiceCommandService cleanup completed');
   }
 }
