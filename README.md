@@ -19,28 +19,55 @@ A hands-free Spotify controller for MentraOS smart glasses that lets you control
 - **"Like this song"** - Add current track to your library
 - **"Previous song"** - Go to previous track
 
-## Setup
+## Quick Deploy to Render 🚀
+
+**Live Production URL**: https://mentraos-spotify.onrender.com
+
+### 1. Get API Keys (5 minutes)
+
+**MentraOS Console**: https://console.mentra.glass
+- Create app with package name: `com.yourname.spotify-controller`
+- Set production URL: `https://mentraos-spotify.onrender.com`
+- Copy your API key
+
+**Spotify Dashboard**: https://developer.spotify.com/dashboard
+- Create app with redirect URI: `https://mentraos-spotify.onrender.com/callback`
+- Copy Client ID and Client Secret
+
+### 2. Deploy to Render (5 minutes)
+
+1. **Push to GitHub** (if not already done)
+2. **Go to render.com** → Sign up → New Web Service
+3. **Connect your GitHub repo**: `MentraOS_Spotify`
+4. **Add environment variables**:
+   ```
+   MENTRAOS_API_KEY=your_mentraos_api_key
+   SPOTIFY_CLIENT_ID=your_spotify_client_id
+   SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+   ```
+5. **Click Deploy** - Render auto-detects the `render.yaml` config
+
+### 3. Install on Glasses (5 minutes)
+
+1. **Test**: Visit https://mentraos-spotify.onrender.com/auth
+2. **Update MentraOS Console** with production URL
+3. **Install via MentraOS phone app**
+4. **Try voice commands**: "Show Spotify", "Next song", etc.
+
+**That's it!** Your app is live and ready for unlimited users. Each person authenticates with their own Spotify Premium account.
+
+📖 **Need detailed setup?** See [RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md) for complete instructions.
+
+---
+
+## Local Development Setup
 
 ### Prerequisites
 
 1. **Node.js** (v18 or higher)
-2. **MentraOS development environment** set up
-3. **Spotify Developer Account** and app credentials
-4. **ngrok** for local development tunneling
-
-### Spotify App Setup
-
-1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Create a new app with these settings:
-   - **App Name**: Mentra Spotify Controller
-   - **Redirect URI**: `http://localhost:3000/callback`
-   - **Scopes**: 
-     - `user-read-currently-playing`
-     - `user-read-playback-state`
-     - `user-modify-playback-state`
-     - `user-library-modify`
-
-3. Note your **Client ID** and **Client Secret**
+2. **MentraOS smart glasses** or development environment
+3. **Spotify Premium account**
+4. **ngrok** for local OAuth callbacks
 
 ### Installation
 
@@ -54,7 +81,7 @@ A hands-free Spotify controller for MentraOS smart glasses that lets you control
 2. **Configure environment**:
    ```bash
    cp .env.example .env
-   # Edit .env with your Spotify credentials
+   # Edit .env with your API keys (see deployment guide)
    ```
 
 3. **Build the project**:
@@ -108,32 +135,39 @@ src/
     └── error-handler.ts  # Centralized error handling
 ```
 
-## Deployment
+## Production Deployment
 
-### Deploy to MentraOS
+### Render Hosting (Recommended)
 
-1. **Build the production version**:
-   ```bash
-   npm run build
-   ```
+This app is pre-configured for **Render** deployment with automatic scaling:
 
-2. **Upload to Mentra Developer Console**:
-   - Package the `dist/` folder and `mentra.config.json`
-   - Upload through the developer portal
-   - Install on your glasses
+- **Production URL**: https://mentraos-spotify.onrender.com
+- **Auto-deploy**: Every git push triggers deployment
+- **Free tier**: 750 hours/month (24/7 coverage)
+- **Zero config**: `render.yaml` handles everything
 
-3. **Configure production redirect URI**:
-   - Update Spotify app settings with your production callback URL
-   - Update environment variables accordingly
+### Environment Variables Required
 
-### Production Environment Variables
+Set these in your Render dashboard:
 
-```bash
-SPOTIFY_CLIENT_ID=your_production_client_id
-SPOTIFY_CLIENT_SECRET=your_production_client_secret
-SPOTIFY_REDIRECT_URI=https://your-production-domain/callback
-PORT=3000
-```
+| Variable | Value | Where to Get |
+|----------|--------|--------------|
+| `MENTRAOS_API_KEY` | Your API key | [MentraOS Console](https://console.mentra.glass) |
+| `SPOTIFY_CLIENT_ID` | Your client ID | [Spotify Dashboard](https://developer.spotify.com/dashboard) |
+| `SPOTIFY_CLIENT_SECRET` | Your client secret | Spotify Dashboard |
+
+Pre-configured automatically:
+- `PACKAGE_NAME`: com.yourname.spotify-controller
+- `SPOTIFY_REDIRECT_URI`: https://mentraos-spotify.onrender.com/callback
+- `PORT`: 10000
+
+### Alternative Hosting
+
+The app also works on:
+- **Railway** (see DEPLOYMENT.md)
+- **Heroku**
+- **DigitalOcean**
+- **Any Node.js hosting platform**
 
 ## Usage
 

@@ -101,10 +101,19 @@ The following are pre-configured:
 
 ## Troubleshooting
 
-**Deployment fails?**
+**Deployment fails with TypeScript errors?**
+- Run `npm run build` locally to test compilation
+- Check that all TypeScript errors are resolved
+- The build process compiles to `dist/index.js`
+
+**Deployment fails with missing dependencies?**
 - Check build logs in Render dashboard
 - Verify all environment variables are set
 - Make sure your GitHub repo is up to date
+
+**"Unknown file extension .ts" error?**
+- Ensure `startCommand` is `node dist/index.js` (not `npm start` with TypeScript files)
+- Verify build process creates `dist/` folder
 
 **Authentication not working?**
 - Verify Spotify redirect URI matches exactly

@@ -7,7 +7,7 @@ export class StorageService {
   async storeTokens(tokens: SpotifyTokens): Promise<void> {
     try {
       const mentra = await import('@mentra/sdk');
-      await mentra.storage.set(StorageService.TOKENS_KEY, JSON.stringify(tokens));
+      await (mentra as any).storage.set(StorageService.TOKENS_KEY, JSON.stringify(tokens));
     } catch (error) {
       console.error('Failed to store tokens:', error);
       throw new Error('Failed to store authentication tokens');
@@ -17,7 +17,7 @@ export class StorageService {
   async getTokens(): Promise<SpotifyTokens | null> {
     try {
       const mentra = await import('@mentra/sdk');
-      const tokensJson = await mentra.storage.get(StorageService.TOKENS_KEY);
+      const tokensJson = await (mentra as any).storage.get(StorageService.TOKENS_KEY);
       
       if (!tokensJson) {
         return null;
@@ -34,7 +34,7 @@ export class StorageService {
   async clearTokens(): Promise<void> {
     try {
       const mentra = await import('@mentra/sdk');
-      await mentra.storage.remove(StorageService.TOKENS_KEY);
+      await (mentra as any).storage.remove(StorageService.TOKENS_KEY);
     } catch (error) {
       console.error('Failed to clear tokens:', error);
     }
@@ -43,7 +43,7 @@ export class StorageService {
   async storeUserPreferences(preferences: Record<string, any>): Promise<void> {
     try {
       const mentra = await import('@mentra/sdk');
-      await mentra.storage.set(StorageService.USER_PREFS_KEY, JSON.stringify(preferences));
+      await (mentra as any).storage.set(StorageService.USER_PREFS_KEY, JSON.stringify(preferences));
     } catch (error) {
       console.error('Failed to store user preferences:', error);
     }
@@ -52,7 +52,7 @@ export class StorageService {
   async getUserPreferences(): Promise<Record<string, any>> {
     try {
       const mentra = await import('@mentra/sdk');
-      const prefsJson = await mentra.storage.get(StorageService.USER_PREFS_KEY);
+      const prefsJson = await (mentra as any).storage.get(StorageService.USER_PREFS_KEY);
       
       if (!prefsJson) {
         return {};

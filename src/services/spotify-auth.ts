@@ -47,7 +47,7 @@ export class SpotifyAuthService {
       throw new Error(`Failed to exchange code for tokens: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     
     const tokens: SpotifyTokens = {
       access_token: data.access_token,
@@ -81,7 +81,7 @@ export class SpotifyAuthService {
       throw new Error(`Failed to refresh token: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     
     const tokens: SpotifyTokens = {
       access_token: data.access_token,

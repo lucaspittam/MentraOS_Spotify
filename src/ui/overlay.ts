@@ -44,7 +44,7 @@ export class SpotifyOverlay {
 
     document.body.appendChild(this.container);
     
-    await mentra.ui.registerOverlay('spotify-overlay', this.container);
+    await (mentra as any).ui.registerOverlay('spotify-overlay', this.container);
   }
 
   private setupStyles(): void {

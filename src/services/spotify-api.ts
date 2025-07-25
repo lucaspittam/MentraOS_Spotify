@@ -91,7 +91,7 @@ export class SpotifyApiService {
         throw new Error(`Failed to get devices: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
       return data.devices || [];
     } catch (error) {
       console.error('Error fetching devices:', error);

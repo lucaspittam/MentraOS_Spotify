@@ -32,7 +32,7 @@ export class VoiceCommandService {
     ];
 
     for (const command of commands) {
-      await mentra.voice.registerCommand(command.phrase, (event) => {
+      await (mentra as any).voice.registerCommand(command.phrase, (event: any) => {
         this.handleVoiceCommand(command.action, event);
       });
     }
@@ -94,8 +94,8 @@ export class VoiceCommandService {
   private async handleFeedback(message: string): Promise<void> {
     try {
       const mentra = await import('@mentra/sdk');
-      await mentra.feedback.haptic('light');
-      await mentra.feedback.audio('success');
+      await (mentra as any).feedback.haptic('light');
+      await (mentra as any).feedback.audio('success');
       
       setTimeout(() => {
         console.log(`Voice command feedback: ${message}`);
@@ -112,7 +112,7 @@ export class VoiceCommandService {
   async cleanup(): Promise<void> {
     try {
       const mentra = await import('@mentra/sdk');
-      await mentra.voice.unregisterAllCommands();
+      await (mentra as any).voice.unregisterAllCommands();
     } catch (error) {
       console.error('Error cleaning up voice commands:', error);
     }
