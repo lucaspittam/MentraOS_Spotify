@@ -52,7 +52,9 @@ export class SpotifyAuthService {
     const tokens: SpotifyTokens = {
       access_token: data.access_token,
       refresh_token: data.refresh_token,
-      expires_at: Date.now() + (data.expires_in * 1000)
+      expires_at: Date.now() + (data.expires_in * 1000),
+      expires_in: data.expires_in,
+      obtained_at: Date.now()
     };
 
     await this.storage.storeTokens(tokens);
@@ -86,7 +88,9 @@ export class SpotifyAuthService {
     const tokens: SpotifyTokens = {
       access_token: data.access_token,
       refresh_token: data.refresh_token || currentTokens.refresh_token,
-      expires_at: Date.now() + (data.expires_in * 1000)
+      expires_at: Date.now() + (data.expires_in * 1000),
+      expires_in: data.expires_in,
+      obtained_at: Date.now()
     };
 
     await this.storage.storeTokens(tokens);

@@ -20,6 +20,8 @@ export interface SpotifyTokens {
   access_token: string;
   refresh_token: string;
   expires_at: number;
+  expires_in: number;
+  obtained_at: number;
 }
 
 export interface AppConfig {
