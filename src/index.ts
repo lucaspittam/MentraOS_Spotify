@@ -50,8 +50,12 @@ class MentraSpotifyApp {
     try {
       console.log('Initializing Mentra Spotify Controller...');
 
-      await this.overlay.initialize();
-      await this.voiceService.initialize();
+      if (this.overlay) {
+        await this.overlay.initialize();
+      }
+      if (this.voiceService) {
+        await this.voiceService.initialize();
+      }
 
       const tokens = await this.storageService.getTokens();
       if (tokens) {
@@ -59,7 +63,9 @@ class MentraSpotifyApp {
         this.startPolling();
       } else {
         console.log('No tokens found, user needs to authenticate');
-        this.overlay.showError('Please authenticate with Spotify first');
+        if (this.overlay) {
+          this.overlay.showError('Please authenticate with Spotify first');
+        }
       }
 
       this.isInitialized = true;
@@ -72,16 +78,22 @@ class MentraSpotifyApp {
 
   private setupErrorHandlers(): void {
     this.errorHandler.onError(ErrorType.AUTHENTICATION, (error) => {
-      this.overlay.showError(error.message);
+      if (this.overlay) {
+        this.overlay.showError(error.message);
+      }
       this.stopPolling();
     });
 
     this.errorHandler.onError(ErrorType.NETWORK, (error) => {
-      this.overlay.showError(error.message);
+      if (this.overlay) {
+        this.overlay.showError(error.message);
+      }
     });
 
     this.errorHandler.onError(ErrorType.API, (error) => {
-      this.overlay.showError(error.message);
+      if (this.overlay) {
+        this.overlay.showError(error.message);
+      }
     });
   }
 
@@ -92,18 +104,22 @@ class MentraSpotifyApp {
 
     this.pollingInterval = setInterval(async () => {
       try {
-        const currentTrack = await this.errorHandler.retryOperation(
-          () => this.apiService.getCurrentlyPlaying(),
-          2,
-          1000
-        );
+        const currentTrack = await this.apiService.getCurrentlyPlaying();
 
         if (currentTrack?.item) {
-          this.overlay.updateTrack(currentTrack.item);
-          this.voiceService.setCurrentTrackId(currentTrack.item.id);
+          if (this.overlay) {
+            this.overlay.updateTrack(currentTrack.item);
+          }
+          if (this.voiceService) {
+            this.voiceService.setCurrentTrackId(currentTrack.item.id);
+          }
         } else {
-          this.overlay.updateTrack(null);
-          this.voiceService.setCurrentTrackId(null);
+          if (this.overlay) {
+            this.overlay.updateTrack(null);
+          }
+          if (this.voiceService) {
+            this.voiceService.setCurrentTrackId(null);
+          }
         }
       } catch (error) {
         this.errorHandler.handleError(error, 'Polling currently playing');
@@ -186,7 +202,9 @@ class MentraSpotifyApp {
     console.log('Cleaning up Mentra Spotify Controller...');
     
     this.stopPolling();
-    await this.voiceService.cleanup();
+    if (this.voiceService) {
+      await this.voiceService.cleanup();
+    }
     
     console.log('Cleanup completed');
   }

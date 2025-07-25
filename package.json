@@ -5,9 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc && ls -la && ls -la dist/",
-    "start": "node start.js",
-    "render-start": "npm run build && node start.js",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit"
   },
