@@ -47,6 +47,8 @@ class SpotifyControllerApp extends AppServer {
     try {
       // Initialize services for this session
       const overlay = new SpotifyOverlay();
+      overlay.setSession(session); // Pass session to overlay
+      
       const voiceService = new VoiceCommandService(this.apiService, overlay);
       const settingsService = new MentraSettingsService(
         session,
