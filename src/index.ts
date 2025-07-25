@@ -146,12 +146,7 @@ class SpotifyControllerApp extends AppServer {
   }
 
   private async showAuthenticationPrompt(session: AppSession): Promise<void> {
-    const authUrl = this.authService.getAuthUrl();
-    
-    // Create a short URL for easier access
-    const shortUrl = `https://mentraos-spotify-vhjh.onrender.com/auth`;
-    
-    const text = `🔗 Connect Spotify\n\n📱 On your phone, visit:\n${shortUrl}\n\n(This will redirect to Spotify login)\n\nOr say "Connect Spotify"`;
+    const text = `🔗 Connect Spotify\n\nTo connect your Spotify account,\nsay "Connect"\n\nThis will open Spotify login\non your connected device`;
     
     session.layouts.showTextWall(text);
   }
