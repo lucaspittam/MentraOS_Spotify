@@ -137,20 +137,22 @@ export class MentraSettingsService {
         return;
       }
 
-      // Generate auth URL for user
-      const authUrl = this.auth.getAuthUrl();
-      console.log('🔑 Spotify auth URL generated:', authUrl);
+      // Generate shorter auth URL for user
+      const shortUrl = 'https://mentraos-spotify-vhjh.onrender.com/auth';
       
-      // In a real MentraOS app, you might:
-      // 1. Show the auth URL in an overlay/display
-      // 2. Use a QR code for easy mobile access
-      // 3. Send a notification with the link
+      // Display the auth URL on the glasses for the user
+      const text = `🔗 Spotify Authentication\n\n📱 On your phone, visit:\n${shortUrl}\n\nThis will redirect to Spotify login\nand connect your account automatically.`;
       
-      // For now, we'll log it - the user would need to visit this URL
-      console.log('📍 User needs to visit this URL to authenticate:', authUrl);
+      this.session.layouts.showTextWall(text);
+      
+      console.log('📍 Auth URL displayed to user:', shortUrl);
       
     } catch (error) {
       console.error('❌ Error handling Spotify connect:', error);
+      
+      // Show error to user
+      const errorText = `❌ Connection Error\n\nFailed to initiate Spotify connection.\nPlease try again.`;
+      this.session.layouts.showTextWall(errorText);
     }
   }
 
