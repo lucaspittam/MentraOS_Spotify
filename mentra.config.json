@@ -1,0 +1,39 @@
+{
+  "appId": "com.yourname.spotify-controller",
+  "name": "Spotify Controller",
+  "version": "1.0.0",
+  "description": "Control Spotify hands-free on your smart glasses",
+  "author": "Your Name",
+  "permissions": [
+    "voice",
+    "storage",
+    "network",
+    "ui"
+  ],
+  "voiceCommands": [
+    {
+      "phrase": "show spotify",
+      "action": "toggleOverlay"
+    },
+    {
+      "phrase": "next song",
+      "action": "nextTrack"
+    },
+    {
+      "phrase": "pause music",
+      "action": "pauseMusic"
+    },
+    {
+      "phrase": "play music",
+      "action": "playMusic"
+    },
+    {
+      "phrase": "like this song",
+      "action": "likeTrack"
+    }
+  ],
+  "ui": {
+    "overlay": true,
+    "theme": "dark"
+  }
+}
