@@ -28,7 +28,9 @@ export class SpotifyOverlay {
   hide(): void {
     this.state.isOverlayVisible = false;
     if (this.session) {
-      this.session.layouts.clearView();
+      // Show main app interface when hiding overlay
+      const text = '🎵 Spotify Controller\n\nSay "Show Spotify" to see music controls\n\nVoice commands:\n• Next song\n• Pause music\n• Play music\n• Like this song';
+      this.session.layouts.showTextWall(text);
     }
   }
 

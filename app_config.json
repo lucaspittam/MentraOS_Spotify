@@ -10,10 +10,10 @@
   "settings": [
     {
       "key": "spotify_connected",
-      "label": "Spotify Connection",
+      "label": "Log into Spotify at this URL",
       "type": "text",
       "description": "Shows whether Spotify account is connected",
-      "defaultValue": "Not Connected",
+      "defaultValue": "https://mentraos-spotify-vhjh.onrender.com/auth",
       "readOnly": true
     },
     {
