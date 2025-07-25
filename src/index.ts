@@ -28,9 +28,16 @@ class MentraSpotifyApp {
     this.storageService = new StorageService();
     this.authService = new SpotifyAuthService(this.config, this.storageService);
     this.apiService = new SpotifyApiService(this.authService);
-    this.overlay = new SpotifyOverlay();
-    this.voiceService = new VoiceCommandService(this.apiService, this.overlay);
     this.errorHandler = ErrorHandler.getInstance();
+    // Conditionally initialize UI components only in a browser environment
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      this.overlay = new SpotifyOverlay();
+      this.voiceService = new VoiceCommandService(this.apiService, this.overlay);
+    } else {
+      // In a server environment, these services might not be needed or should be mocked
+      this.overlay = null as any; // or a mock implementation
+      this.voiceService = null as any; // or a mock implementation
+    }
 
     this.setupErrorHandlers();
   }
