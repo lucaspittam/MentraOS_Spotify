@@ -35,6 +35,7 @@ class SpotifyControllerApp extends AppServer {
     this.errorHandler = ErrorHandler.getInstance();
 
     this.setupErrorHandlers();
+    this.setupOAuthCallback();
   }
 
   /**
@@ -186,6 +187,85 @@ class SpotifyControllerApp extends AppServer {
     this.errorHandler.onError(ErrorType.API, (error) => {
       console.error('📡 API error:', error);
     });
+  }
+
+  private setupOAuthCallback(): void {
+    const app = this.getExpressApp();
+    
+    // Spotify OAuth callback endpoint
+    app.get('/callback', async (req, res) => {
+      try {
+        const { code, error, state } = req.query;
+        
+        if (error) {
+          console.error('❌ Spotify OAuth error:', error);
+          res.send(`
+            <html>
+              <body style="font-family: system-ui; text-align: center; margin-top: 50px;">
+                <h2>❌ Authentication Failed</h2>
+                <p>Error: ${error}</p>
+                <p>Please return to your MentraOS glasses and try again.</p>
+              </body>
+            </html>
+          `);
+          return;
+        }
+
+        if (!code) {
+          console.error('❌ No authorization code received');
+          res.send(`
+            <html>
+              <body style="font-family: system-ui; text-align: center; margin-top: 50px;">
+                <h2>❌ Authentication Failed</h2>
+                <p>No authorization code received from Spotify.</p>
+                <p>Please return to your MentraOS glasses and try again.</p>
+              </body>
+            </html>
+          `);
+          return;
+        }
+
+        console.log('🔐 Received Spotify authorization code, exchanging for tokens...');
+        
+        // Exchange code for tokens
+        const tokens = await this.authService.exchangeCodeForTokens(code as string);
+        
+        // Store tokens
+        await this.storageService.storeTokens(tokens);
+        
+        console.log('✅ Spotify authentication successful!');
+        
+        res.send(`
+          <html>
+            <body style="font-family: system-ui; text-align: center; margin-top: 50px;">
+              <h2>✅ Spotify Connected Successfully!</h2>
+              <p>You can now return to your MentraOS glasses.</p>
+              <p>Say "Show Spotify" to see your music controls.</p>
+              <script>
+                // Auto-close after 3 seconds
+                setTimeout(() => {
+                  window.close();
+                }, 3000);
+              </script>
+            </body>
+          </html>
+        `);
+        
+      } catch (error) {
+        console.error('❌ OAuth callback error:', error);
+        res.send(`
+          <html>
+            <body style="font-family: system-ui; text-align: center; margin-top: 50px;">
+              <h2>❌ Authentication Error</h2>
+              <p>Failed to complete Spotify authentication.</p>
+              <p>Please return to your MentraOS glasses and try again.</p>
+            </body>
+          </html>
+        `);
+      }
+    });
+
+    console.log('🔗 OAuth callback endpoint set up at /callback');
   }
 }
 
