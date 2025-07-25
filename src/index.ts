@@ -146,7 +146,7 @@ class SpotifyControllerApp extends AppServer {
   }
 
   private async showAuthenticationPrompt(session: AppSession): Promise<void> {
-    const text = `🔗 Connect Spotify\n\nTo connect your account:\n\n1. Go to Settings → App Settings\n2. Find "Spotify Controller"\n3. Select "Connect Account"\n\nOr say "Connect" for quick link`;
+    const text = `🔗 Connect Spotify\n\nTo connect your account:\n\n1. Go to Settings → App Settings\n2. Find "Spotify Controller"\n3. Select "Connect Account"\n\nThis will show login instructions.`;
     
     session.layouts.showTextWall(text);
   }

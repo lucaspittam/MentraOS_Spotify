@@ -62,10 +62,7 @@ export class VoiceCommandService {
       return true;
     }
     
-    if (lowerText.includes('connect') && !lowerText.includes('disconnect')) {
-      await this.handleVoiceCommand('connectSpotify');
-      return true;
-    }
+    // Authentication handled through Settings only
     
     return false; // Command not recognized
   }
@@ -112,24 +109,7 @@ export class VoiceCommandService {
           }
           break;
 
-        case 'connectSpotify':
-          if (this.session) {
-            const authUrl = 'https://mentraos-spotify-vhjh.onrender.com/auth';
-            
-            // Try to generate a notification to the phone if possible
-            try {
-              // This will show the URL prominently for easy access
-              const text = `🔗 Connecting Spotify...\n\n📱 Open this on your phone:\n${authUrl}\n\n(Link will open Spotify login)`;
-              this.session.layouts.showTextWall(text);
-              
-              // Provide haptic feedback to indicate action
-              await this.handleFeedback('Spotify login link displayed. Open the URL on your phone to continue.');
-            } catch (error) {
-              console.error('Error showing auth URL:', error);
-              this.overlay.showError('Failed to display authentication URL');
-            }
-          }
-          break;
+        // Authentication handled through Settings → App Settings only
 
         default:
           console.warn(`Unknown voice command action: ${action}`);

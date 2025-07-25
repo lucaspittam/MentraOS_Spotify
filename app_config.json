@@ -1,0 +1,70 @@
+{
+  "name": "Spotify Controller",
+  "description": "Voice-controlled Spotify playback for MentraOS smart glasses",
+  "packageName": "com.ldpr.spotifycontroller",
+  "webhookUrl": "https://mentraos-spotify-vhjh.onrender.com/webhook",
+  "permissions": [
+    "microphone"
+  ],
+  "settings": [
+    {
+      "key": "spotify_connected",
+      "type": "text",
+      "title": "Spotify Connection",
+      "description": "Shows whether Spotify account is connected",
+      "defaultValue": "Not Connected",
+      "readOnly": true
+    },
+    {
+      "key": "auth_action",
+      "type": "select",
+      "title": "Account Connection",
+      "description": "Connect or disconnect your Spotify account",
+      "options": [
+        {"value": "none", "label": "No Action"},
+        {"value": "connect", "label": "Connect Account"},
+        {"value": "disconnect", "label": "Disconnect Account"}
+      ],
+      "defaultValue": "none"
+    },
+    {
+      "key": "show_album_art",
+      "type": "toggle",
+      "title": "Show Album Art",
+      "description": "Display album artwork in music overlay",
+      "defaultValue": false
+    },
+    {
+      "key": "auto_show_overlay",
+      "type": "toggle", 
+      "title": "Auto-Show Music Overlay",
+      "description": "Automatically show music overlay when song changes",
+      "defaultValue": false
+    },
+    {
+      "key": "overlay_timeout",
+      "type": "slider",
+      "title": "Overlay Display Time",
+      "description": "How long to show music overlay (seconds)",
+      "min": 5,
+      "max": 60,
+      "step": 1,
+      "defaultValue": 15
+    },
+    {
+      "key": "voice_feedback",
+      "type": "toggle",
+      "title": "Voice Confirmations", 
+      "description": "Play audio confirmations for voice commands",
+      "defaultValue": true
+    },
+    {
+      "key": "haptic_feedback",
+      "type": "toggle",
+      "title": "Haptic Feedback",
+      "description": "Vibration confirmations for voice commands", 
+      "defaultValue": true
+    }
+  ],
+  "tools": []
+}
