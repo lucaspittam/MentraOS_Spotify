@@ -139,7 +139,21 @@ class SpotifyControllerApp extends AppServer {
   }
 
   private async showAuthenticationPrompt(session: AppSession): Promise<void> {
-    const text = `🎵 Spotify Controller\n\nConnect your Spotify account:\n\nSettings → App Settings → Spotify Controller\n→ Account Connection → Connect Account\n\nYour music will appear here automatically\nonce connected.`;
+    const authUrl = 'https://mentraos-spotify-vhjh.onrender.com/auth';
+    
+    const text = `
+     ╭─────────────────────────────────────────╮
+     │                                         │
+     │  🔗  Connect Your Spotify Account       │
+     │                                         │
+     │  On your phone or computer, visit:      │
+     │  ${authUrl}                             │
+     │                                         │
+     │  Your music will appear here            │
+     │  automatically once connected.          │
+     │                                         │
+     ╰─────────────────────────────────────────╯
+    `.trim();
     
     session.layouts.showTextWall(text);
   }
@@ -162,6 +176,8 @@ class SpotifyControllerApp extends AppServer {
         const tokens = await this.storageService.getTokens();
         const hasTokens = !!tokens;
         
+        console.log(`🔍 Auth check: hasTokens=${hasTokens}, isAuthenticated=${isAuthenticated}`);
+        
         if (hasTokens && !isAuthenticated) {
           // Just became authenticated
           console.log('✅ User just authenticated with Spotify, starting music integration');
@@ -173,7 +189,8 @@ class SpotifyControllerApp extends AppServer {
           isAuthenticated = false;
           await this.showAuthenticationPrompt(session);
         } else if (!hasTokens && !isAuthenticated) {
-          // Still not authenticated, show prompt
+          // Still not authenticated, show prompt (but don't spam it)
+          console.log('⏳ Still waiting for authentication...');
           await this.showAuthenticationPrompt(session);
         }
         // If hasTokens && isAuthenticated, continue normal operation

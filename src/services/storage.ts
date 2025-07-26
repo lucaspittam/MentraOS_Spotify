@@ -11,14 +11,22 @@ export class StorageService {
 
   async storeTokens(tokens: SpotifyTokens): Promise<void> {
     try {
+      console.log('💾 Storing Spotify tokens...', { 
+        hasAccessToken: !!tokens.access_token,
+        hasRefreshToken: !!tokens.refresh_token,
+        expiresIn: tokens.expires_in 
+      });
+      
       if (isServer) {
         await fs.writeFile(TOKENS_FILE_PATH, JSON.stringify(tokens, null, 2));
+        console.log('✅ Tokens stored to file:', TOKENS_FILE_PATH);
       } else {
         const mentra = await import('@mentra/sdk');
         await (mentra as any).storage.set(StorageService.TOKENS_KEY, JSON.stringify(tokens));
+        console.log('✅ Tokens stored to MentraOS storage');
       }
     } catch (error) {
-      console.error('Failed to store tokens:', error);
+      console.error('❌ Failed to store tokens:', error);
       throw new Error('Failed to store authentication tokens');
     }
   }
@@ -28,9 +36,12 @@ export class StorageService {
       if (isServer) {
         try {
           const tokensJson = await fs.readFile(TOKENS_FILE_PATH, 'utf-8');
-          return JSON.parse(tokensJson) as SpotifyTokens;
+          const tokens = JSON.parse(tokensJson) as SpotifyTokens;
+          console.log('📖 Retrieved tokens from file:', { hasTokens: !!tokens.access_token });
+          return tokens;
         } catch (error) {
           if (error instanceof Error && 'code' in error && (error as any).code === 'ENOENT') {
+            console.log('📖 No token file found');
             return null; // File doesn't exist
           }
           throw error;
@@ -40,13 +51,16 @@ export class StorageService {
         const tokensJson = await (mentra as any).storage.get(StorageService.TOKENS_KEY);
         
         if (!tokensJson) {
+          console.log('📖 No tokens in MentraOS storage');
           return null;
         }
 
-        return JSON.parse(tokensJson) as SpotifyTokens;
+        const tokens = JSON.parse(tokensJson) as SpotifyTokens;
+        console.log('📖 Retrieved tokens from MentraOS storage:', { hasTokens: !!tokens.access_token });
+        return tokens;
       }
     } catch (error) {
-      console.error('Failed to retrieve tokens:', error);
+      console.error('❌ Failed to retrieve tokens:', error);
       return null;
     }
   }
