@@ -25,23 +25,46 @@ export class StorageService {
         await (mentra as any).storage.set(StorageService.TOKENS_KEY, JSON.stringify(tokens));
         console.log('✅ Tokens stored to MentraOS storage');
       }
+      
+      // Update cache immediately
+      this.tokenCache = tokens;
+      this.lastTokenCheck = Date.now();
+      
     } catch (error) {
       console.error('❌ Failed to store tokens:', error);
       throw new Error('Failed to store authentication tokens');
     }
   }
 
+  private tokenCache: SpotifyTokens | null = null;
+  private lastTokenCheck = 0;
+  private readonly TOKEN_CACHE_TTL = 2000; // Cache for 2 seconds to reduce file I/O
+
   async getTokens(): Promise<SpotifyTokens | null> {
     try {
+      const now = Date.now();
+      
+      // Use cache if recent (reduces file I/O race conditions)
+      if (this.tokenCache && (now - this.lastTokenCheck) < this.TOKEN_CACHE_TTL) {
+        console.log('📖 Using cached tokens:', { hasTokens: !!this.tokenCache.access_token });
+        return this.tokenCache;
+      }
+
       if (isServer) {
         try {
           const tokensJson = await fs.readFile(TOKENS_FILE_PATH, 'utf-8');
           const tokens = JSON.parse(tokensJson) as SpotifyTokens;
           console.log('📖 Retrieved tokens from file:', { hasTokens: !!tokens.access_token });
+          
+          // Update cache
+          this.tokenCache = tokens;
+          this.lastTokenCheck = now;
           return tokens;
         } catch (error) {
           if (error instanceof Error && 'code' in error && (error as any).code === 'ENOENT') {
             console.log('📖 No token file found');
+            this.tokenCache = null;
+            this.lastTokenCheck = now;
             return null; // File doesn't exist
           }
           throw error;
@@ -52,11 +75,17 @@ export class StorageService {
         
         if (!tokensJson) {
           console.log('📖 No tokens in MentraOS storage');
+          this.tokenCache = null;
+          this.lastTokenCheck = now;
           return null;
         }
 
         const tokens = JSON.parse(tokensJson) as SpotifyTokens;
         console.log('📖 Retrieved tokens from MentraOS storage:', { hasTokens: !!tokens.access_token });
+        
+        // Update cache
+        this.tokenCache = tokens;
+        this.lastTokenCheck = now;
         return tokens;
       }
     } catch (error) {

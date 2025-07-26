@@ -14,6 +14,9 @@ class SpotifyControllerApp extends AppServer {
   private apiService: SpotifyApiService;
   private storageService: StorageService;
   private errorHandler: ErrorHandler;
+  private isDevelopmentMode: boolean;
+  private lastMusicState: boolean = false;
+  private cameraConflictDetected: boolean = false;
 
   constructor() {
     super({
@@ -22,6 +25,9 @@ class SpotifyControllerApp extends AppServer {
       port: parseInt(process.env.PORT || '3000'),
       appInstructions: 'Say "Show Spotify" to see music controls, or go to Settings to connect your Spotify account.'
     });
+    
+    // Detect camera conflicts automatically based on behavior
+    this.isDevelopmentMode = false;
     
     this.spotifyConfig = {
       clientId: process.env.SPOTIFY_CLIENT_ID || '',
@@ -74,7 +80,29 @@ class SpotifyControllerApp extends AppServer {
       // Handle session lifecycle
       session.events.onButtonPress((button) => {
         console.log('🔘 Button pressed:', button);
-        // Handle button interactions
+        
+        // Detect camera conflicts automatically
+        if (button.buttonId === 'camera') {
+          console.log('📷 Camera button pressed - this may pause music');
+          this.cameraConflictDetected = true;
+          
+          // Set a flag to resume music after camera conflict
+          setTimeout(async () => {
+            try {
+              console.log('🎵 Checking if music needs to be resumed after camera...');
+              const currentTrack = await this.apiService.getCurrentlyPlaying();
+              if (!currentTrack || !currentTrack.is_playing) {
+                console.log('🎵 Music was paused by camera, attempting to resume...');
+                await this.apiService.playTrack();
+                console.log('✅ Music resumed after camera conflict');
+              }
+            } catch (error) {
+              console.log('⚠️ Could not auto-resume music:', error);
+            }
+          }, 2000); // Wait 2 seconds after camera action
+        }
+        
+        // Handle other button interactions
       });
 
       session.events.onTranscription(async (data) => {
@@ -128,16 +156,17 @@ class SpotifyControllerApp extends AppServer {
         
         // Show initial track info
         await this.showTrackInfo(session, currentTrack.item);
-        
-        // Start polling for track changes
-        console.log('🔄 Starting track polling');
-        this.startTrackPolling(session, overlay);
       } else {
         console.log('⚠️ No current track, showing no music display');
         // Clear overlay track state
         overlay.updateTrack(null);
         await this.showNoMusicDisplay(session);
       }
+
+      // Always start polling regardless of current track status
+      // This allows us to detect when music starts playing
+      console.log('🔄 Starting track polling (will detect when music starts)');
+      this.startTrackPolling(session, overlay);
 
     } catch (error) {
       console.error('❌ Error starting music integration:', error);
@@ -153,9 +182,12 @@ class SpotifyControllerApp extends AppServer {
   }
 
   private async showNoMusicDisplay(session: AppSession): Promise<void> {
-    const text = '🎵 Spotify Controller\n\nNo music playing\n\nStart playing music on Spotify\nthen say "Show Spotify"\n\nVoice commands:\n• Next song\n• Pause music\n• Play music';
+    const baseText = '🎵 Spotify Controller\n\nNo music playing\n\nStart playing music on Spotify\nthen say "Show Spotify"\n\nVoice commands:\n• Next song\n• Pause music\n• Play music';
     
-    session.layouts.showTextWall(text);
+    const cameraWarning = this.cameraConflictDetected ? 
+      '\n\n📷 Note: Camera may pause music.\nApp will try to auto-resume.' : '';
+    
+    session.layouts.showTextWall(baseText + cameraWarning);
   }
 
   private async showAuthenticationPrompt(session: AppSession): Promise<void> {
@@ -235,10 +267,21 @@ class SpotifyControllerApp extends AppServer {
         console.log('🔄 Polling for track updates...');
         const currentTrack = await this.apiService.getCurrentlyPlaying();
         
+        const isPlaying = currentTrack?.is_playing || false;
+        
+        // Detect music interruptions (could be camera conflicts)
+        if (this.lastMusicState && !isPlaying && this.cameraConflictDetected) {
+          console.log('📷 Music stopped after camera activity - camera conflict detected');
+          this.cameraConflictDetected = false; // Reset flag
+        }
+        
+        this.lastMusicState = isPlaying;
+        
         console.log('🔄 Poll result:', {
           hasTrack: !!currentTrack,
           hasItem: !!currentTrack?.item,
-          trackName: currentTrack?.item?.name || 'No track'
+          trackName: currentTrack?.item?.name || 'No track',
+          isPlaying: isPlaying
         });
         
         if (currentTrack?.item) {
