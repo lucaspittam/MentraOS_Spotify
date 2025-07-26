@@ -19,15 +19,33 @@ export class SpotifyOverlay {
   }
 
   show(): void {
+    console.log('🎨 Overlay: show() called');
     this.state.isOverlayVisible = true;
+    
+    console.log('🎨 Overlay state after show:', {
+      isVisible: this.state.isOverlayVisible,
+      hasSession: !!this.session,
+      hasCurrentTrack: !!this.state.currentTrack,
+      trackName: this.state.currentTrack?.name || 'No track'
+    });
+    
     if (this.session && this.state.currentTrack) {
+      console.log('🎨 Displaying current track');
       this.displayCurrentTrack();
+    } else if (this.session) {
+      console.log('🎨 No current track, displaying no music display');
+      this.displayCurrentTrack(); // This will show "No Music Playing"
+    } else {
+      console.log('🎨 No session available');
     }
   }
 
   hide(): void {
+    console.log('🎨 Overlay: hide() called');
     this.state.isOverlayVisible = false;
+    
     if (this.session) {
+      console.log('🎨 Showing minimal interface');
       // Show minimal interface when overlay is hidden
       const text = `
      ╭─────────────────────────────────────────╮
@@ -42,22 +60,38 @@ export class SpotifyOverlay {
      ╰─────────────────────────────────────────╯
       `.trim();
       this.session.layouts.showTextWall(text);
+    } else {
+      console.log('🎨 No session available for hiding');
     }
   }
 
   toggle(): void {
+    console.log('🎨 Overlay: toggle() called, current visibility:', this.state.isOverlayVisible);
+    
     if (this.state.isOverlayVisible) {
+      console.log('🎨 Overlay currently visible, hiding it');
       this.hide();
     } else {
+      console.log('🎨 Overlay currently hidden, showing it');
       this.show();
     }
   }
 
   updateTrack(track: SpotifyTrack | null): void {
+    console.log('🎨 Overlay: updateTrack called', {
+      hasTrack: !!track,
+      trackName: track?.name || 'No track',
+      isOverlayVisible: this.state.isOverlayVisible,
+      hasSession: !!this.session
+    });
+    
     this.state.currentTrack = track;
     
     if (this.session && this.state.isOverlayVisible) {
+      console.log('🎨 Overlay: Displaying current track');
       this.displayCurrentTrack();
+    } else {
+      console.log('🎨 Overlay: Not displaying - overlay not visible or no session');
     }
   }
 

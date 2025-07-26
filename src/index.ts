@@ -106,22 +106,42 @@ class SpotifyControllerApp extends AppServer {
     overlay: SpotifyOverlay,
     voiceService: VoiceCommandService
   ): Promise<void> {
+    console.log('🎵 Starting music integration...');
+    
     try {
-      // Get currently playing track
+      // Get currently playing track with detailed logging
+      console.log('📡 Fetching currently playing track from Spotify API...');
       const currentTrack = await this.apiService.getCurrentlyPlaying();
       
+      console.log('📊 Current track response:', {
+        hasTrack: !!currentTrack,
+        hasItem: !!currentTrack?.item,
+        trackName: currentTrack?.item?.name || 'No track',
+        isPlaying: currentTrack?.is_playing || false
+      });
+      
       if (currentTrack?.item) {
+        console.log('✅ Track found, updating overlay and displaying track info');
+        
+        // Update overlay with current track
+        overlay.updateTrack(currentTrack.item);
+        
         // Show initial track info
         await this.showTrackInfo(session, currentTrack.item);
         
         // Start polling for track changes
+        console.log('🔄 Starting track polling');
         this.startTrackPolling(session, overlay);
       } else {
+        console.log('⚠️ No current track, showing no music display');
+        // Clear overlay track state
+        overlay.updateTrack(null);
         await this.showNoMusicDisplay(session);
       }
 
     } catch (error) {
       console.error('❌ Error starting music integration:', error);
+      console.error('❌ Error details:', error instanceof Error ? error.message : String(error));
       await this.showErrorDisplay(session, 'Failed to connect to Spotify');
     }
   }
@@ -208,14 +228,29 @@ class SpotifyControllerApp extends AppServer {
   }
 
   private startTrackPolling(session: AppSession, overlay: SpotifyOverlay): void {
+    console.log('🔄 Setting up track polling (every 5 seconds)');
+    
     setInterval(async () => {
       try {
+        console.log('🔄 Polling for track updates...');
         const currentTrack = await this.apiService.getCurrentlyPlaying();
         
+        console.log('🔄 Poll result:', {
+          hasTrack: !!currentTrack,
+          hasItem: !!currentTrack?.item,
+          trackName: currentTrack?.item?.name || 'No track'
+        });
+        
         if (currentTrack?.item) {
+          console.log('🔄 Updating overlay with new track data');
           // Update overlay if visible
           if (overlay) {
             overlay.updateTrack(currentTrack.item);
+          }
+        } else {
+          console.log('🔄 No track playing, clearing overlay');
+          if (overlay) {
+            overlay.updateTrack(null);
           }
         }
       } catch (error) {

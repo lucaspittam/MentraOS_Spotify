@@ -25,9 +25,11 @@ export class VoiceCommandService {
 
   async processVoiceInput(text: string): Promise<boolean> {
     const lowerText = text.toLowerCase().trim();
+    console.log('🎤 Processing voice input:', text, '→', lowerText);
     
     // Check for Spotify commands
     if (lowerText.includes('show spotify')) {
+      console.log('🎤 "Show Spotify" command detected, toggling overlay');
       await this.handleVoiceCommand('toggleOverlay');
       return true;
     }

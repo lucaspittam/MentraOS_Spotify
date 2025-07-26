@@ -10,9 +10,14 @@ export class SpotifyApiService {
   }
 
   async getCurrentlyPlaying(): Promise<SpotifyCurrentlyPlaying | null> {
+    console.log('🎧 SpotifyApiService: Getting currently playing track...');
+    
     try {
+      console.log('🔑 Getting valid access token...');
       const accessToken = await this.authService.getValidAccessToken();
+      console.log('✅ Access token obtained:', accessToken ? 'Present' : 'Missing');
       
+      console.log(`📞 Making API call to ${this.baseUrl}/me/player/currently-playing`);
       const response = await fetch(`${this.baseUrl}/me/player/currently-playing`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -20,18 +25,35 @@ export class SpotifyApiService {
         }
       });
 
+      console.log('📈 API Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+
       if (response.status === 204) {
+        console.log('🔇 No content (204) - no music currently playing');
         return null;
       }
 
       if (!response.ok) {
+        console.error('❌ API request failed:', response.status, response.statusText);
         throw new Error(`Failed to get currently playing track: ${response.statusText}`);
       }
 
+      console.log('📦 Parsing JSON response...');
       const data = await response.json();
+      console.log('🎵 Track data received:', {
+        hasItem: !!data.item,
+        trackName: data.item?.name || 'No name',
+        isPlaying: data.is_playing
+      });
+      
       return data as SpotifyCurrentlyPlaying;
     } catch (error) {
-      console.error('Error fetching currently playing:', error);
+      console.error('❌ Error fetching currently playing:', error);
+      console.error('❌ Error type:', error instanceof Error ? error.constructor.name : typeof error);
+      console.error('❌ Error message:', error instanceof Error ? error.message : String(error));
       throw error;
     }
   }
