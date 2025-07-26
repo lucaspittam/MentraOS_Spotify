@@ -5,7 +5,6 @@ import { StorageService } from './services/storage';
 import { VoiceCommandService } from './services/voice-commands';
 import { SpotifyOverlay } from './ui/overlay';
 import { ErrorHandler, ErrorType } from './utils/error-handler';
-import { MentraSettingsService } from './services/mentra-settings';
 import { AppConfig } from './types';
 
 class SpotifyControllerApp extends AppServer {
@@ -57,22 +56,11 @@ class SpotifyControllerApp extends AppServer {
       overlay.setSession(session); // Pass session to overlay
       
       const voiceService = new VoiceCommandService(this.apiService, overlay);
-      voiceService.setSession(session); // Pass session to voice service
-      
-      const settingsService = new MentraSettingsService(
-        session,
-        this.apiService,
-        this.storageService,
-        this.authService
-      );
+      voiceService.setSession(session);
 
-      // Initialize all services
+      // Initialize services
       await overlay.initialize();
       await voiceService.initialize();
-      await settingsService.initialize();
-
-      // Start periodic updates
-      settingsService.startPeriodicUpdates();
 
       // Start authentication state monitoring
       await this.startAuthStateMonitoring(session, overlay, voiceService);
@@ -198,19 +186,13 @@ class SpotifyControllerApp extends AppServer {
   private async showAuthenticationPrompt(session: AppSession): Promise<void> {
     const authUrl = 'https://mentraos-spotify-vhjh.onrender.com/auth';
     
-    const text = `
-     ╭─────────────────────────────────────────╮
-     │                                         │
-     │  🔗  Connect Your Spotify Account       │
-     │                                         │
-     │  On your phone or computer, visit:      │
-     │  ${authUrl}                             │
-     │                                         │
-     │  Your music will appear here            │
-     │  automatically once connected.          │
-     │                                         │
-     ╰─────────────────────────────────────────╯
-    `.trim();
+    const text = `Spotify Setup Required
+
+Visit this link on your phone:
+${authUrl}
+
+After connecting, your music 
+will appear automatically`;
     
     session.layouts.showTextWall(text);
   }
@@ -226,42 +208,34 @@ class SpotifyControllerApp extends AppServer {
     overlay: SpotifyOverlay,
     voiceService: VoiceCommandService
   ): Promise<void> {
-    let isAuthenticated = false;
+    let musicIntegrationStarted = false;
     
     const checkAuthState = async () => {
       try {
         const tokens = await this.storageService.getTokens();
-        const hasTokens = !!tokens;
         
-        console.log(`🔍 Auth check: hasTokens=${hasTokens}, isAuthenticated=${isAuthenticated}`);
-        
-        if (hasTokens && !isAuthenticated) {
-          // Just became authenticated
-          console.log('✅ User just authenticated with Spotify, starting music integration');
-          isAuthenticated = true;
+        if (tokens && !musicIntegrationStarted) {
+          console.log('✅ Spotify connected, starting music integration');
+          musicIntegrationStarted = true;
           await this.startMusicIntegration(session, overlay, voiceService);
-        } else if (!hasTokens && isAuthenticated) {
-          // Just lost authentication
-          console.log('❌ User lost Spotify authentication');
-          isAuthenticated = false;
-          await this.showAuthenticationPrompt(session);
-        } else if (!hasTokens && !isAuthenticated) {
-          // Still not authenticated, show prompt (but don't spam it)
-          console.log('⏳ Still waiting for authentication...');
+        } else if (!tokens) {
+          if (musicIntegrationStarted) {
+            console.log('❌ Spotify disconnected');
+            musicIntegrationStarted = false;
+          }
           await this.showAuthenticationPrompt(session);
         }
-        // If hasTokens && isAuthenticated, continue normal operation
         
       } catch (error) {
-        console.error('❌ Error checking authentication state:', error);
+        console.error('❌ Auth check failed:', error);
       }
     };
     
     // Initial check
     await checkAuthState();
     
-    // Check every 3 seconds for auth state changes
-    setInterval(checkAuthState, 3000);
+    // Check every 5 seconds (less spam)
+    setInterval(checkAuthState, 5000);
   }
 
   private startTrackPolling(session: AppSession, overlay: SpotifyOverlay): void {

@@ -45,20 +45,15 @@ export class SpotifyOverlay {
     this.state.isOverlayVisible = false;
     
     if (this.session) {
-      console.log('🎨 Showing minimal interface');
-      const text = `🎵 SPOTIFY CONTROLLER
+      const text = `Spotify Controller
 
-Say "Show Spotify" for music
+Say "Show Spotify" for controls
 
-Voice commands:
-• Next song
-• Pause music  
-• Play music
-
-Connected and ready`;
+Commands available:
+- "next song"
+- "pause music" 
+- "play music"`;
       this.session.layouts.showTextWall(text);
-    } else {
-      console.log('🎨 No session available for hiding');
     }
   }
 
@@ -92,28 +87,6 @@ Connected and ready`;
     }
   }
 
-  private generateWaveform(isPlaying: boolean = true): string {
-    if (!isPlaying) {
-      return '________ ______ ________ ______';
-    }
-    
-    // Generate dynamic waveform bars with different heights
-    const bars = ['|', '||', '|||', '||||', '|||||'];
-    const segments: string[] = [];
-    
-    // Create 4 segments of waveform
-    for (let i = 0; i < 4; i++) {
-      let segment = '';
-      for (let j = 0; j < 8; j++) {
-        // Vary the bar heights with some randomness but keep it musical
-        const height = Math.floor(Math.random() * bars.length);
-        segment += bars[height];
-      }
-      segments.push(segment);
-    }
-    
-    return segments.join(' ');
-  }
 
   private displayCurrentTrack(): void {
     if (!this.session) return;
@@ -122,36 +95,27 @@ Connected and ready`;
       const track = this.state.currentTrack;
       const artists = track.artists.map(a => a.name).join(', ');
       
-      const songTitle = track.name.length > 30 ? track.name.substring(0, 30) + '...' : track.name;
-      const artistName = artists.length > 30 ? artists.substring(0, 30) + '...' : artists;
-      const waveform = this.generateWaveform(true);
-      
-      const text = `🎵 NOW PLAYING
+      const text = `Now Playing:
+${track.name}
+by ${artists}
 
-${songTitle}
-by ${artistName}
-
-${waveform}
-
-Say "next song" to skip
-Say "pause music" to pause`;
+Commands:
+- "next song"
+- "pause music"
+- "play music"`;
       
       this.session.layouts.showTextWall(text);
     } else {
-      const waveform = this.generateWaveform(false);
-      const text = `🎵 SPOTIFY CONTROLLER
+      const text = `Spotify Controller
 
 No music playing
 
-Start playing music on Spotify
-then say "Show Spotify"
+Start music on Spotify first
 
-${waveform}
-
-Voice commands:
-• Next song
-• Pause music  
-• Play music`;
+Commands:
+- "next song" 
+- "pause music"
+- "play music"`;
       
       this.session.layouts.showTextWall(text);
     }
@@ -161,18 +125,9 @@ Voice commands:
     this.state.isLoading = loading;
     
     if (this.session && this.state.isOverlayVisible && loading) {
-      const text = `
-     ╭─────────────────────────────────────────╮
-     │                                         │
-     │  🎵  Loading...                         │
-     │      Processing command                 │
-     │                                         │
-     │  [○○○○○○○○○○] --:-- / --:--             │
-     │                                         │
-     │  ♪ ________ ______ ________ ______ ♪   │
-     │                                         │
-     ╰─────────────────────────────────────────╯
-      `.trim();
+      const text = `Loading...
+
+Processing command...`;
       this.session.layouts.showTextWall(text);
     }
   }
@@ -181,19 +136,11 @@ Voice commands:
     this.state.error = error;
     
     if (this.session && error) {
-      const errorMsg = error.length > 35 ? error.substring(0, 35) + '...' : error;
-      const text = `
-     ╭─────────────────────────────────────────╮
-     │                                         │
-     │  ❌  Error                              │
-     │      ${errorMsg}${' '.repeat(Math.max(0, 32 - errorMsg.length))}      │
-     │                                         │
-     │  [○○○○○○○○○○] --:-- / --:--             │
-     │                                         │
-     │  ♪ ________ ______ ________ ______ ♪   │
-     │                                         │
-     ╰─────────────────────────────────────────╯
-      `.trim();
+      const text = `Error
+
+${error}
+
+Try again`;
       this.session.layouts.showTextWall(text);
     }
   }
