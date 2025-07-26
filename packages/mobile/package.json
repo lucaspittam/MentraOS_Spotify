@@ -1,0 +1,13 @@
+{
+  "name": "@mentra/mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "android": "echo 'Starting Android app...'",
+    "ios": "echo 'Starting iOS app...'"
+  },
+  "dependencies": {
+    "@mentra/core": "1.0.0"
+  }
+}

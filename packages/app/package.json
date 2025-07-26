@@ -1,0 +1,32 @@
+{
+  "name": "@mentra/basic-app",
+  "version": "1.0.0",
+  "description": "Basic MentraOS app with voice commands and text display",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mentra/sdk": "^2.1.13",
+    "@mentra/core": "*",
+    "node-fetch": "^3.3.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^24.1.0",
+    "@types/uuid": "^9.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.8.3"
+  },
+  "keywords": ["mentraos", "basic-app", "smart-glasses", "voice-control"],
+  "author": "Your Name",
+  "license": "MIT",
+  "private": true
+}

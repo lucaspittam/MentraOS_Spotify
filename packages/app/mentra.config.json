@@ -1,0 +1,11 @@
+{
+  "appId": "com.yourname.basic-app",
+  "name": "Basic MentraOS App",
+  "version": "1.0.0",
+  "description": "Basic MentraOS app with voice commands and text display",
+  "author": "Your Name",
+  "permissions": [
+    "microphone"
+  ],
+  "appInstructions": "Say 'Show Media' or 'Hide Media' to test voice commands."
+}
