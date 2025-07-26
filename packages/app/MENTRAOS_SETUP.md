@@ -34,16 +34,42 @@ MENTRAOS_API_KEY=your_api_key_from_console
 PORT=3000
 ```
 
-### 4. App Settings (Optional)
-If you want user-configurable settings, add these in the Console Settings section:
+### 4. App Configuration Import
+Import the complete app configuration using the `app_config.json` file:
 
-**Basic Settings:**
+1. **Go to Console Settings** → **Configuration Management**
+2. **Import Configuration** → Upload `app_config.json`
+3. **Verify Settings** - Check that all settings imported correctly:
+   - Show Overlay on App Start (toggle)
+   - Display Mode (select: minimal/standard/detailed)  
+   - Custom Welcome Message (text)
+
+**Or Configure Manually:**
+If importing doesn't work, add these settings manually in the Console Settings section:
+
 ```json
 {
   "key": "show_overlay_on_start",
   "label": "Show Overlay on App Start", 
   "type": "toggle",
   "defaultValue": false
+},
+{
+  "key": "display_mode",
+  "label": "Display Mode",
+  "type": "select", 
+  "defaultValue": "standard",
+  "options": [
+    {"label": "Minimal", "value": "minimal"},
+    {"label": "Standard", "value": "standard"},
+    {"label": "Detailed", "value": "detailed"}
+  ]
+},
+{
+  "key": "custom_message",
+  "label": "Custom Welcome Message",
+  "type": "text",
+  "defaultValue": "Say 'Show Media' to show overlay"
 }
 ```
 

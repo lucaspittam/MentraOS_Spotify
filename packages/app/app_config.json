@@ -1,0 +1,58 @@
+{
+  "app_name": "Basic MentraOS App",
+  "description": "Basic MentraOS app with voice commands and text display - a minimal foundation for building smart glasses applications",
+  "version": "1.0.0",
+  "package_name": "com.yourname.basic-app",
+  "author": "Your Name",
+  "settings": [
+    {
+      "type": "toggle",
+      "key": "show_overlay_on_start",
+      "label": "Show Overlay on App Start",
+      "defaultValue": false
+    },
+    {
+      "type": "select",
+      "key": "display_mode",
+      "label": "Display Mode",
+      "defaultValue": "standard",
+      "options": [
+        {
+          "label": "Minimal",
+          "value": "minimal"
+        },
+        {
+          "label": "Standard", 
+          "value": "standard"
+        },
+        {
+          "label": "Detailed",
+          "value": "detailed"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "key": "custom_message",
+      "label": "Custom Welcome Message",
+      "defaultValue": "Say 'Show Media' to show overlay",
+      "maxLines": 2
+    }
+  ],
+  "permissions": [
+    "microphone"
+  ],
+  "tools": [],
+  "urls": {
+    "homepage": "https://github.com/lucaspittam/MentraOS_Spotify",
+    "support": "https://github.com/lucaspittam/MentraOS_Spotify/issues",
+    "privacy_policy": ""
+  },
+  "app_instructions": "Say 'Show Media' or 'Hide Media' to test voice commands.",
+  "webhook_url": "https://your-app.onrender.com",
+  "environment_variables": {
+    "PACKAGE_NAME": "com.yourname.basic-app",
+    "MENTRAOS_API_KEY": "your_api_key_here",
+    "PORT": "3000"
+  }
+}

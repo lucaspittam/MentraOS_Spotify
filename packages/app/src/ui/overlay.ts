@@ -35,10 +35,22 @@ export class MediaOverlay {
   private render(): void {
     if (!this.session) return;
 
+    // Get custom message from settings if available
+    const customMessage = this.session.settings?.get('custom_message') || 'Say "Show Media" to show overlay';
+    const displayMode = this.session.settings?.get('display_mode') || 'standard';
+
     if (this.state.isOverlayVisible) {
-      this.session.layouts.showTextWall('Overlay is visible!\n\nSay "Hide Media" to hide');
+      let text = 'Overlay is visible!\n\nSay "Hide Media" to hide';
+      
+      if (displayMode === 'minimal') {
+        text = 'Overlay ON';
+      } else if (displayMode === 'detailed') {
+        text = 'Overlay Status: VISIBLE\n\nVoice Commands:\n• "Hide Media" - Hide overlay\n• Try other voice commands!';
+      }
+      
+      this.session.layouts.showTextWall(text);
     } else {
-      this.session.layouts.showTextWall('Say "Show Media" to show overlay');
+      this.session.layouts.showTextWall(customMessage);
     }
   }
 

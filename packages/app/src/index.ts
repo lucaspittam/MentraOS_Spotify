@@ -31,6 +31,12 @@ class MediaControllerApp extends AppServer {
       await overlay.initialize();
       await voiceService.initialize();
 
+      // Check if overlay should be shown on start
+      const showOnStart = session.settings?.get('show_overlay_on_start');
+      if (showOnStart) {
+        overlay.show();
+      }
+
       session.events.onTranscription(async (data) => {
         session.logger.info('🎤 Voice input:', data.text);
         const wasHandled = await voiceService.processVoiceInput(data.text);
