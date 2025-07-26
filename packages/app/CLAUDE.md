@@ -311,15 +311,25 @@ MentraOS_Media_Controller/              # Monorepo root
 - **Universal Format**: Design layouts that work with any audio app content
 - **Loading States**: Show loading feedback during mobile operations
 
+## Deployment
+
+### Current Hosting
+- **Platform**: Render.com cloud hosting
+- **Build Command**: `npm install && npm run build` 
+- **Start Command**: `npm run render-start`
+- **Environment**: Node.js production environment
+- **Port**: Auto-assigned by Render (via PORT env var)
+
+### Render Configuration
+The app includes a `render.yaml` file for deployment configuration and a `render-start` script in package.json for proper startup sequence.
+
 ## Memories
 
-- **Universal Media Control**: Pivoted from Spotify-specific to universal media controller
-- **System-Level Integration**: Uses Android MediaController and iOS MPRemoteCommandCenter
-- **No Authentication Required**: Eliminates OAuth complexity by using system APIs
-- **Three-Tier Architecture**: MentraOS cloud app → Mobile companion → System media control
-- **Mobile Relay Pattern**: Cloud app processes voice, mobile app executes system controls
-- **App Agnostic Design**: Works with any audio app automatically
-- **Real-time Mobile Communication**: Cloud and mobile apps communicate via MentraOS mobile SDK
-- **Voice-to-System Control**: Voice commands on glasses control system media functions
-- **Universal Compatibility**: Same voice commands work across Spotify, Apple Music, YouTube Music, etc.
-- **Simplified Development**: No API keys, tokens, or external service integrations needed
+- **Stripped to Essentials**: Removed all non-working features, kept only voice recognition and text display
+- **Basic MentraOS App**: Simple foundation with working voice commands ("Show Media"/"Hide Media") 
+- **Render Deployment**: Deployed to Render.com with proper build/start scripts
+- **Voice Transcription**: Uses `session.events.onTranscription()` for voice input processing
+- **Text Layouts**: Uses `session.layouts.showTextWall()` for AR display
+- **Session Logging**: Uses `session.logger.info()` for proper MentraOS logging
+- **Minimal Config**: Only microphone permission, no settings, no complex features
+- **Working Foundation**: Ready for building actual functionality on top

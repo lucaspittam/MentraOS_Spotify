@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mentraos-basic-app
+    env: node
+    plan: free
+    buildCommand: cd packages/app && npm install && npm run build
+    startCommand: cd packages/app && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        fromService:
+          type: web
+          name: mentraos-basic-app
+          property: port
