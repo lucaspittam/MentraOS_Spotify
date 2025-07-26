@@ -68,15 +68,8 @@ class SpotifyControllerApp extends AppServer {
       // Start periodic updates
       settingsService.startPeriodicUpdates();
 
-      // Check if user is authenticated with Spotify
-      const tokens = await this.storageService.getTokens();
-      if (tokens) {
-        console.log('✅ User has Spotify tokens, starting music integration');
-        await this.startMusicIntegration(session, overlay, voiceService);
-      } else {
-        console.log('❌ User needs to authenticate with Spotify');
-        await this.showAuthenticationPrompt(session);
-      }
+      // Start authentication state monitoring
+      await this.startAuthStateMonitoring(session, overlay, voiceService);
 
       // Handle session lifecycle
       session.events.onButtonPress((button) => {
@@ -146,7 +139,7 @@ class SpotifyControllerApp extends AppServer {
   }
 
   private async showAuthenticationPrompt(session: AppSession): Promise<void> {
-    const text = `🔗 Connect Spotify\n\nTo connect your account:\n\n1. Go to Settings → App Settings\n2. Find "Spotify Controller"\n3. Select "Connect Account"\n\nThis will show login instructions.`;
+    const text = `🎵 Spotify Controller\n\nConnect your Spotify account:\n\nSettings → App Settings → Spotify Controller\n→ Account Connection → Connect Account\n\nYour music will appear here automatically\nonce connected.`;
     
     session.layouts.showTextWall(text);
   }
@@ -155,6 +148,46 @@ class SpotifyControllerApp extends AppServer {
     const text = `❌ Error\n\n${message}`;
     
     session.layouts.showTextWall(text);
+  }
+
+  private async startAuthStateMonitoring(
+    session: AppSession, 
+    overlay: SpotifyOverlay,
+    voiceService: VoiceCommandService
+  ): Promise<void> {
+    let isAuthenticated = false;
+    
+    const checkAuthState = async () => {
+      try {
+        const tokens = await this.storageService.getTokens();
+        const hasTokens = !!tokens;
+        
+        if (hasTokens && !isAuthenticated) {
+          // Just became authenticated
+          console.log('✅ User just authenticated with Spotify, starting music integration');
+          isAuthenticated = true;
+          await this.startMusicIntegration(session, overlay, voiceService);
+        } else if (!hasTokens && isAuthenticated) {
+          // Just lost authentication
+          console.log('❌ User lost Spotify authentication');
+          isAuthenticated = false;
+          await this.showAuthenticationPrompt(session);
+        } else if (!hasTokens && !isAuthenticated) {
+          // Still not authenticated, show prompt
+          await this.showAuthenticationPrompt(session);
+        }
+        // If hasTokens && isAuthenticated, continue normal operation
+        
+      } catch (error) {
+        console.error('❌ Error checking authentication state:', error);
+      }
+    };
+    
+    // Initial check
+    await checkAuthState();
+    
+    // Check every 3 seconds for auth state changes
+    setInterval(checkAuthState, 3000);
   }
 
   private startTrackPolling(session: AppSession, overlay: SpotifyOverlay): void {
