@@ -3,8 +3,8 @@ services:
     name: mentraos-basic-app
     env: node
     plan: free
-    buildCommand: cd packages/app && npm install && npm run build
-    startCommand: cd packages/app && npm start
+    buildCommand: npm install --include=dev
+    startCommand: npm run render-start
     envVars:
       - key: NODE_ENV
         value: production

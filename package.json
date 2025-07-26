@@ -7,8 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace=packages/app && npm run build --workspace=packages/core",
-    "start": "npm start --workspace=packages/app"
+    "build": "npm run build --workspace=packages/app",
+    "start": "npm start --workspace=packages/app", 
+    "render-start": "npm run build --workspace=packages/app && npm start --workspace=packages/app",
+    "install-all": "npm install && npm install --workspace=packages/app"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
