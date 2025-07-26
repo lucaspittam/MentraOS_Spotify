@@ -46,19 +46,16 @@ export class SpotifyOverlay {
     
     if (this.session) {
       console.log('🎨 Showing minimal interface');
-      // Show minimal interface when overlay is hidden
-      const text = `
-     ╭─────────────────────────────────────────╮
-     │                                         │
-     │  🎵  Spotify Controller                 │
-     │      Say "Show Spotify" for music       │
-     │                                         │
-     │  Voice commands: Next • Pause • Play    │
-     │                                         │
-     │  ♪ ________ ______ ________ ______ ♪   │
-     │                                         │
-     ╰─────────────────────────────────────────╯
-      `.trim();
+      const text = `🎵 SPOTIFY CONTROLLER
+
+Say "Show Spotify" for music
+
+Voice commands:
+• Next song
+• Pause music  
+• Play music
+
+Connected and ready`;
       this.session.layouts.showTextWall(text);
     } else {
       console.log('🎨 No session available for hiding');
@@ -125,39 +122,37 @@ export class SpotifyOverlay {
       const track = this.state.currentTrack;
       const artists = track.artists.map(a => a.name).join(', ');
       
-      // Create clean, minimal music card
-      const songTitle = track.name.length > 32 ? track.name.substring(0, 32) + '...' : track.name;
-      const artistName = artists.length > 38 ? artists.substring(0, 38) + '...' : artists;
+      const songTitle = track.name.length > 30 ? track.name.substring(0, 30) + '...' : track.name;
+      const artistName = artists.length > 30 ? artists.substring(0, 30) + '...' : artists;
       const waveform = this.generateWaveform(true);
       
-      const text = `
-     ╭─────────────────────────────────────────╮
-     │                                         │
-     │  🎵  ${songTitle}${' '.repeat(Math.max(0, 32 - songTitle.length))}  │
-     │      ${artistName}${' '.repeat(Math.max(0, 32 - artistName.length))}      │
-     │                                         │
-     │  [●●●●●●○○○○] 3:24 / 5:55               │
-     │                                         │
-     │  ♪ ${waveform} ♪   │
-     │                                         │
-     ╰─────────────────────────────────────────╯
-      `.trim();
+      const text = `🎵 NOW PLAYING
+
+${songTitle}
+by ${artistName}
+
+${waveform}
+
+Say "next song" to skip
+Say "pause music" to pause`;
       
       this.session.layouts.showTextWall(text);
     } else {
       const waveform = this.generateWaveform(false);
-      const text = `
-     ╭─────────────────────────────────────────╮
-     │                                         │
-     │  🎵  No Music Playing                   │
-     │      Start playing on Spotify          │
-     │                                         │
-     │  [○○○○○○○○○○] 0:00 / 0:00               │
-     │                                         │
-     │  ♪ ${waveform} ♪   │
-     │                                         │
-     ╰─────────────────────────────────────────╯
-      `.trim();
+      const text = `🎵 SPOTIFY CONTROLLER
+
+No music playing
+
+Start playing music on Spotify
+then say "Show Spotify"
+
+${waveform}
+
+Voice commands:
+• Next song
+• Pause music  
+• Play music`;
+      
       this.session.layouts.showTextWall(text);
     }
   }

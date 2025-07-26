@@ -165,12 +165,17 @@ class SpotifyControllerApp extends AppServer {
 
       // Always start polling regardless of current track status
       // This allows us to detect when music starts playing
-      console.log('🔄 Starting track polling (will detect when music starts)');
+      console.log('🔄 About to start track polling...');
+      console.log('🔄 Session exists:', !!session);
+      console.log('🔄 Overlay exists:', !!overlay);
+      
       this.startTrackPolling(session, overlay);
+      console.log('🔄 Track polling setup completed');
 
     } catch (error) {
       console.error('❌ Error starting music integration:', error);
       console.error('❌ Error details:', error instanceof Error ? error.message : String(error));
+      console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
       await this.showErrorDisplay(session, 'Failed to connect to Spotify');
     }
   }
