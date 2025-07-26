@@ -8,11 +8,10 @@ class MediaControllerApp extends AppServer {
 
   constructor() {
     super({
-      packageName: process.env.PACKAGE_NAME || 'com.yourname.media-controller',
+      packageName: process.env.PACKAGE_NAME || 'com.yourname.basic-app',
       apiKey: process.env.MENTRAOS_API_KEY || '',
       port: parseInt(process.env.PORT || '3000'),
-      appInstructions: 'Say "Show Media" to see music controls.',
-      permissions: ['microphone'],
+      appInstructions: 'Say "Show Media" or "Hide Media" to test voice commands.',
     });
 
     this.errorHandler = ErrorHandler.getInstance();
