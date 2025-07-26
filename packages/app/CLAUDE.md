@@ -183,11 +183,12 @@ NODE_ENV=development
 ## Deployment Requirements
 
 ### MentraOS App Registration
-- **Console Registration**: Register app at [console.mentra.glass](https://console.mentra.glass)
-- **Package Name**: Must match `PACKAGE_NAME` environment variable
+- **Console Registration**: Register app at [console.mentra.glass/apps](https://console.mentra.glass/apps)
+- **Package Name**: Must match `PACKAGE_NAME` environment variable exactly
 - **API Key**: Obtain from MentraOS Console for authentication
 - **Webhook URL**: Point to your deployed app's root URL
-- **Permissions**: Declare required permissions (microphone for voice input)
+- **Permissions**: Declare in console (microphone for voice input)
+- **Setup Guide**: See `MENTRAOS_SETUP.md` for complete console configuration
 
 ### Cloud Hosting
 - **Static Domain**: Required for consistent webhook access
@@ -331,5 +332,7 @@ The app includes a `render.yaml` file for deployment configuration and a `render
 - **Voice Transcription**: Uses `session.events.onTranscription()` for voice input processing
 - **Text Layouts**: Uses `session.layouts.showTextWall()` for AR display
 - **Session Logging**: Uses `session.logger.info()` for proper MentraOS logging
-- **Minimal Config**: Only microphone permission, no settings, no complex features
+- **Console Configuration**: App config is done in MentraOS Console, not local files
+- **No Local Config Files**: Removed mentra.config.json - configuration is console-based
+- **Setup Documentation**: Created MENTRAOS_SETUP.md with complete console configuration guide
 - **Working Foundation**: Ready for building actual functionality on top
